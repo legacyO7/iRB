@@ -9,9 +9,6 @@ mkdir -p vendor/asus/
 mkdir -p kernel/asus/
 echo "Name of the ROM :"
 read n
-echo "Install Repo Command :"
-read re
-$re
 d="https://github.com/ArrowOS-Devices/android_device_asus_X01BD"
 k="https://github.com/ArrowOS-Devices/android_kernel_asus_X01BD"
 v="https://github.com/ArrowOS-Devices/android_vendor_asus_X01BD"
@@ -32,7 +29,7 @@ sleep 3
 repo sync -j8
 cd device/asus
 git clone $d
-
+read news
 mv *device* X01BD
 cd X01BD
 rm -rf *_X01BD.mk AndroidProducts.mk
@@ -71,13 +68,25 @@ mv device/asus/X01BD/legacy.mk device/asus/X01BD/"$n"_X01BD.mk
 make clean
 ./ufo/log
 sleep 4
+
+if [ "$n" == "pixys" ]; then
+lunch pixys_X01BD-userdebug
+make pixys -j8
+z=3
+
+elif [ "$n" == "viper" ]; then
+. build/envsetup.sh
+lunch viper_X01BD-userdebug
+mka poison
+z=3
+else
 . build/envsetup.sh
 brunch "$n"_X01BD-eng
+z=0
+fi
 printf "\n\n\n\n"
 echo "process stopped!! may be build succeded or error occured"
 
-
-z=0
 for ((; $z < 3;));
 do
 printf "\n\n1. rebuild the rom?\n2. clean-build the rom?\n3. exit?\n"
