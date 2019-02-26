@@ -7,6 +7,10 @@ rm -rf vendor/asus/*
 mkdir -p device/asus/
 mkdir -p vendor/asus/
 mkdir -p kernel/asus/
+
+echo "command to initialize your local repository :"
+read re
+$re
 echo "Name of the ROM :"
 read n
 d="https://github.com/ArrowOS-Devices/android_device_asus_X01BD"
@@ -23,13 +27,11 @@ read v
 echo "enter git KERNEL tree :"
 read k
 fi
-
 echo "sit back and relax, while I take care of this stuff"
 sleep 3
 repo sync -j8
 cd device/asus
 git clone $d
-read news
 mv *device* X01BD
 cd X01BD
 rm -rf *_X01BD.mk AndroidProducts.mk
@@ -37,20 +39,16 @@ mv *.dependencies $n.dependencies
 cd $lo
 cd vendor/asus
 git clone $v
-pwd
 mv *vendor* X01BD
 cd $lo
 cd kernel/asus
 git clone $k
-pwd
 mv *kernel* sdm660
 cd $lo
-pwd
 cd hardware/qcom && rm -rf audio-caf/* display-caf/* media-caf/* && cd ../..
 git clone https://github.com/KudProject/hardware_qcom_audio-caf -b lineage-16.0/msm8998 hardware/qcom/audio-caf/msm8998
 git clone https://github.com/KudProject/hardware_qcom_media-caf -b lineage-16.0/msm8998 hardware/qcom/media-caf/msm8998
 git clone https://github.com/KudProject/hardware_qcom_display-caf -b lineage-16.0/msm8998 hardware/qcom/display-caf/
-pwd
 cd vendor/$n
 rm -rf vendorsetup.sh
 echo add_lunch_combo "$n"_X01BD-userdebug>vendorsetup.sh
