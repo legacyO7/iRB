@@ -1,0 +1,91 @@
+#!/bin/bash
+clear
+lo=$(pwd)
+rm -rf device/asus/*
+rm -rf kernel/asus/*
+rm -rf vendor/asus/*
+mkdir -p device/asus/
+mkdir -p vendor/asus/
+mkdir -p kernel/asus/
+echo "Name of the ROM :"
+read n
+d="https://github.com/ArrowOS-Devices/android_device_asus_X01BD"
+k="https://github.com/ArrowOS-Devices/android_kernel_asus_X01BD"
+v="https://github.com/ArrowOS-Devices/android_vendor_asus_X01BD"
+echo "use the trees from arrow team? (y/n)"
+read val
+
+if [ "$val" == "n" ]; then
+echo "enter git DEVICE tree :"
+read d
+echo "enter git VENDOR tree :"
+read v
+echo "enter git KERNEL tree :"
+read k
+fi
+
+echo "sit back and relax, while I take care of this stuff"
+sleep 3
+repo sync -j8
+cd device/asus
+git clone $d
+read news
+mv *device* X01BD
+cd X01BD
+rm -rf *_X01BD.mk AndroidProducts.mk
+mv arrow.dependencies $n.dependencies
+cd $lo
+cd vendor/asus
+git clone $v
+pwd
+mv *vendor* X01BD
+cd $lo
+cd kernel/asus
+git clone $k
+pwd
+mv *kernel* sdm660
+cd $lo
+pwd
+cd hardware/qcom && rm -rf audio-caf/* display-caf/* media-caf/* && cd ../..
+git clone https://github.com/KudProject/hardware_qcom_audio-caf -b lineage-16.0/msm8998 hardware/qcom/audio-caf/msm8998
+git clone https://github.com/KudProject/hardware_qcom_media-caf -b lineage-16.0/msm8998 hardware/qcom/media-caf/msm8998
+git clone https://github.com/KudProject/hardware_qcom_display-caf -b lineage-16.0/msm8998 hardware/qcom/display-caf/
+pwd
+cd vendor/$n
+rm -rf vendorsetup.sh
+echo add_lunch_combo "$n"_X01BD-eng>vendorsetup.sh
+chmod +x vendorsetup.sh
+cd $lo
+
+cd ufo
+pwd
+echo ""$n"/config/common.mk)">>legacy.mk
+printf "\nPRODUCT_NAME := "$n"_X01BD">>legacy.mk
+echo ""$n"_X01BD.mk">>AndroidProducts.mk
+cd ..
+cp ufo/*.mk  device/asus/X01BD/
+mv device/asus/X01BD/legacy.mk device/asus/X01BD/"$n"_X01BD.mk 
+make clean
+./ufo/log
+sleep 4
+. build/envsetup.sh
+brunch "$n"_X01BD-eng
+printf "\n\n\n\n"
+echo "process stopped!! may be build succeded or error occured"
+
+
+z=0
+for ((; $z < 3;));
+do
+printf "\n\n1. rebuild the rom?\n2. clean-build the rom?\n3. exit?\n"
+read z
+
+   if [ "$z" == "1" ]; then
+   brunch "$n"_X01BD-eng
+   fi
+   
+   if [ "$z" == "2" ]; then
+   make clean
+   brunch "$n"_X01BD-eng
+   fi
+done

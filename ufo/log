@@ -1,0 +1,14 @@
+#!/bin/bash
+clear
+echo "================================================================== v1.0 =="
+echo "                                 iRom Builder "
+printf '\e[93;5;196m \n'
+echo -e "\e[1m"
+echo "                           === Coded by #ArtFul ==="
+echo " "
+echo " "
+echo -e "\e[5m \e[25m"
+echo "                       on behalf of noob community "
+printf '\e[32;196m \n'
+echo "===============================HERE WE GO==================================="
+printf '\n\n\n\n\n'
