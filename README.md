@@ -9,4 +9,4 @@ cp -rf $(pwd)/iRB/* $(pwd)
 
 and there's your rom
 
-NB: Environment should be set before the use
+NB: Environment should be set before use
