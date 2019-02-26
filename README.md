@@ -9,6 +9,4 @@ cp -rf $(pwd)/iRB/* $(pwd)
 
 and there's your rom
 
-NB: 
-1. Environment should be set before the use
-2. One time use only, clone it again for the next build
+NB: Environment should be set before the use
