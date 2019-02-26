@@ -7,15 +7,17 @@ rm -rf vendor/asus/*
 mkdir -p device/asus/
 mkdir -p vendor/asus/
 mkdir -p kernel/asus/
-
+./ufo/log
 echo "command to initialize your local repository :"
 read re
 $re
+./ufo/log
 echo "Name of the ROM :"
 read n
 d="https://github.com/ArrowOS-Devices/android_device_asus_X01BD"
 k="https://github.com/ArrowOS-Devices/android_kernel_asus_X01BD"
 v="https://github.com/ArrowOS-Devices/android_vendor_asus_X01BD"
+./ufo/log
 echo "use the trees from arrow team? (y/n)"
 read val
 
@@ -27,6 +29,7 @@ read v
 echo "enter git KERNEL tree :"
 read k
 fi
+./ufo/log
 echo "sit back and relax, while I take care of this stuff"
 sleep 3
 repo sync -j8
@@ -65,6 +68,8 @@ cp ufo/*.mk  device/asus/X01BD/
 mv device/asus/X01BD/legacy.mk device/asus/X01BD/"$n"_X01BD.mk 
 make clean
 ./ufo/log
+echo "HERE WE GO,...."
+echo "Now you are on yourown, Good Luck!!"
 sleep 4
 . build/envsetup.sh
 
