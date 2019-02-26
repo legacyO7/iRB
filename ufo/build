@@ -32,7 +32,7 @@ sleep 3
 repo sync -j8
 cd device/asus
 git clone $d
-read news
+
 mv *device* X01BD
 cd X01BD
 rm -rf *_X01BD.mk AndroidProducts.mk
