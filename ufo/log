@@ -8,7 +8,7 @@ echo "                           === Coded by #ArtFul ==="
 echo " "
 echo " "
 echo -e "\e[5m \e[25m"
-echo "                       on behalf of noob community "
+echo "                          on behalf of noob community "
 printf '\e[32;196m \n'
-echo "===============================HERE WE GO==================================="
-printf '\n\n\n\n\n'
+echo "==========================================================================="
+printf '\n\n'
