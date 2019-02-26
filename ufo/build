@@ -9,6 +9,9 @@ mkdir -p vendor/asus/
 mkdir -p kernel/asus/
 echo "Name of the ROM :"
 read n
+echo "Install Repo Command :"
+read re
+$re
 d="https://github.com/ArrowOS-Devices/android_device_asus_X01BD"
 k="https://github.com/ArrowOS-Devices/android_kernel_asus_X01BD"
 v="https://github.com/ArrowOS-Devices/android_vendor_asus_X01BD"
