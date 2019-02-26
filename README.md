@@ -1,9 +1,9 @@
 # iRB
 go to root directory of the rom and 
 
-git clone https://github.com/legacy08/iRB
-
 sudo su
+
+git clone https://github.com/legacy08/iRB
 
 cp -rf $(pwd)/iRB/* $(pwd) && chmod +x go
 
