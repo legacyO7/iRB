@@ -1,6 +1,8 @@
 # iRB
-go to root directory of rom and "git clone https://github.com/legacy08/iRB"
+go to root directory of the rom and "git clone https://github.com/legacy08/iRB"
+
 sudo su
+
 ./go 
 and there's your rom
 
