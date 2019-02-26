@@ -33,7 +33,7 @@ read news
 mv *device* X01BD
 cd X01BD
 rm -rf *_X01BD.mk AndroidProducts.mk
-mv arrow.dependencies $n.dependencies
+mv *.dependencies $n.dependencies
 cd $lo
 cd vendor/asus
 git clone $v
