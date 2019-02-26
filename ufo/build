@@ -53,7 +53,7 @@ git clone https://github.com/KudProject/hardware_qcom_display-caf -b lineage-16.
 pwd
 cd vendor/$n
 rm -rf vendorsetup.sh
-echo add_lunch_combo "$n"_X01BD-eng>vendorsetup.sh
+echo add_lunch_combo "$n"_X01BD-userdebug>vendorsetup.sh
 chmod +x vendorsetup.sh
 cd $lo
 
@@ -68,20 +68,25 @@ mv device/asus/X01BD/legacy.mk device/asus/X01BD/"$n"_X01BD.mk
 make clean
 ./ufo/log
 sleep 4
+. build/envsetup.sh
 
 if [ "$n" == "pixys" ]; then
 lunch pixys_X01BD-userdebug
 make pixys -j8
 z=3
 
+elif [ "$n" == "aosip" ]; then
+lunch aosip_X01BD-userdebug
+time mka kronic
+z=3
+
 elif [ "$n" == "viper" ]; then
-. build/envsetup.sh
 lunch viper_X01BD-userdebug
 mka poison
 z=3
+
 else
-. build/envsetup.sh
-brunch "$n"_X01BD-eng
+brunch "$n"_X01BD-userdebug
 z=0
 fi
 printf "\n\n\n\n"
@@ -93,11 +98,11 @@ printf "\n\n1. rebuild the rom?\n2. clean-build the rom?\n3. exit?\n"
 read z
 
    if [ "$z" == "1" ]; then
-   brunch "$n"_X01BD-eng
+   brunch "$n"_X01BD-userdebug
    fi
    
    if [ "$z" == "2" ]; then
    make clean
-   brunch "$n"_X01BD-eng
+   brunch "$n"_X01BD-userdebug
    fi
 done
