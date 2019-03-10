@@ -1,111 +1,152 @@
 #!/bin/bash
 clear
+
+if [ -f lock ]; then
+./subgo
+else
+./ufo/log
+echo "Setup Environment ? (y/n)"
+read val
+if [ "$val" == "y" ]; then
+sudo apt update
+sudo apt-get install git ccache automake lzop bison gperf build-essential zip curl zlib1g-dev zlib1g-dev:i386 g++-multilib python-networkx libxml2-utils bzip2 libbz2-dev libbz2-1.0 libghc-bzlib-dev squashfs-tools pngcrush schedtool dpkg-dev liblz4-tool make optipng -y
+mkdir /bin
+curl http://commondatastorage.googleapis.com/git-repo-downloads/repo > /bin/repo
+chmod +x /bin/repo
+source ~/.bashrc 
+fi
+
 lo=$(pwd)
+nv=0
 rm -rf device/asus/*
 rm -rf kernel/asus/*
 rm -rf vendor/asus/*
-mkdir -p device/asus/
-mkdir -p vendor/asus/
-mkdir -p kernel/asus/
 ./ufo/log
-echo "command to initialize your local repository :"
+echo "Command to initialize your local repository :"
 read re
-$re
 ./ufo/log
 echo "Name of the ROM :"
 read n
-d="https://github.com/ArrowOS-Devices/android_device_asus_X01BD"
-k="https://github.com/ArrowOS-Devices/android_kernel_asus_X01BD"
-v="https://github.com/ArrowOS-Devices/android_vendor_asus_X01BD"
+./ufo/log
+echo "PRODUCT NAME PREFIX (??????_X01BD) :"
+read pre
+./ufo/log
+echo "Should I use brunch command ? (y/n)"
+read bru
+if [ "$bru" == "n" ]; then
+echo "Provide me the make command :"
+read maki
+fi
+./ufo/log
+echo "locking the GATE ..."
+echo '#!/bin/bash'>lock
+echo "../../../go">>lock
+chmod +x lock
+echo "Deploying locks to device, vendor, kernel..."
+echo "You can access GO from within the trees by the commaand ./go."
+echo "You dont need to come back to the root folder everytime for rebuilding after bug fix"
+sleep 5
+d="https://github.com/ArrowOS-Devices/android_device_asus_X01BD -b arrow-9.x"
+k="https://github.com/ArrowOS-Devices/android_kernel_asus_X01BD -b arrow-9.x"
+v="https://github.com/ArrowOS-Devices/android_vendor_asus_X01BD -b arrow-9.x"
 ./ufo/log
 echo "use the trees from arrow team? (y/n)"
 read val
 
 if [ "$val" == "n" ]; then
-echo "enter git DEVICE tree :"
+echo "enter git DEVICE tree with branch :"
 read d
-echo "enter git VENDOR tree :"
+echo "enter git VENDOR tree with branch :"
 read v
-echo "enter git KERNEL tree :"
+echo "enter git KERNEL tree with branch :"
 read k
 fi
 ./ufo/log
+echo "use audio/media/display cafs of KudProject (y/n)"
+read val
+./ufo/log
 echo "sit back and relax, while I take care of this stuff"
-sleep 3
+sleep 4
+clear
+$re
 repo sync -j8
-cd device/asus
-git clone $d
-mv *device* X01BD
-cd X01BD
+cfp=common.mk
+
+git clone $d device/asus/X01BD
+git clone $v vendor/asus/X01BD
+git clone $k kernel/asus/sdm660
+cp lock device/asus/X01BD
+cp lock vendor/asus/X01BD
+cp lock kernel/asus/sdm660
+mv device/asus/X01BD/lock device/asus/X01BD/go
+mv vendor/asus/X01BD/lock vendor/asus/X01BD/go
+mv kernel/asus/sdm660/lock kernel/asus/sdm660/go
+
+cd device/asus/X01BD
 rm -rf *_X01BD.mk AndroidProducts.mk
 mv *.dependencies $n.dependencies
 cd $lo
-cd vendor/asus
-git clone $v
-mv *vendor* X01BD
-cd $lo
-cd kernel/asus
-git clone $k
-mv *kernel* sdm660
-cd $lo
+
+if [ "$val" == "y" ]; then
 cd hardware/qcom && rm -rf audio-caf/* display-caf/* media-caf/* && cd ../..
 git clone https://github.com/KudProject/hardware_qcom_audio-caf -b lineage-16.0/msm8998 hardware/qcom/audio-caf/msm8998
 git clone https://github.com/KudProject/hardware_qcom_media-caf -b lineage-16.0/msm8998 hardware/qcom/media-caf/msm8998
-git clone https://github.com/KudProject/hardware_qcom_display-caf -b lineage-16.0/msm8998 hardware/qcom/display-caf/
-cd vendor/$n
+git clone https://github.com/KudProject/hardware_qcom_display-caf -b lineage-16.0/msm8998 hardware/qcom/display-caf/msm8998
+fi
+
+cd vendor
+if [ -d $n ]; then
+cd $n
+if [ -f config/common_full_phone.mk ]; then
+cfp=common_full_phone.mk
+fi
+nv=1
+else
+cd $pre
+if [ -f config/common_full_phone.mk ]; then
+cfp=common_full_phone.mk
+fi
+fi
 rm -rf vendorsetup.sh
-echo add_lunch_combo "$n"_X01BD-userdebug>vendorsetup.sh
+echo add_lunch_combo "$pre"_X01BD-userdebug>vendorsetup.sh
 chmod +x vendorsetup.sh
 cd $lo
 
 cd ufo
-pwd
-echo ""$n"/config/common.mk)">>legacy.mk
-printf "\nPRODUCT_NAME := "$n"_X01BD">>legacy.mk
-echo ""$n"_X01BD.mk">>AndroidProducts.mk
+if [ "$nv" == "1" ]; then
+echo ""$n"/config/"$cfp")">>legacy.m0
+else
+echo ""$pre"/config/"$cfp")">>legacy.m0
+fi
+printf "\nPRODUCT_NAME := "$pre"_X01BD">>legacy.m0
+echo ""$pre"_X01BD.mk">>apro.m0
 cd ..
-cp ufo/*.mk  device/asus/X01BD/
-mv device/asus/X01BD/legacy.mk device/asus/X01BD/"$n"_X01BD.mk 
+cp ufo/*.m0  device/asus/X01BD/
+mv device/asus/X01BD/legacy.m0 device/asus/X01BD/"$pre"_X01BD.mk 
+mv device/asus/X01BD/apro.m0 device/asus/X01BD/AndroidProducts.mk 
 make clean
 ./ufo/log
 echo "HERE WE GO,...."
 echo "Now you are on yourown, Good Luck!!"
 sleep 4
 . build/envsetup.sh
+echo '#!/bin/bash'>subgo
+echo ". build/envsetup.sh">>subgo
 
-if [ "$n" == "pixys" ]; then
-lunch pixys_X01BD-userdebug
-make pixys -j8
-z=3
-
-elif [ "$n" == "aosip" ]; then
-lunch aosip_X01BD-userdebug
-time mka kronic
-z=3
-
-elif [ "$n" == "viper" ]; then
-lunch viper_X01BD-userdebug
-mka poison
-z=3
-
+if [ "$bru" == "n" ]; then
+lunch "$pre"_X01BD-userdebug
+$maki
+echo "lunch "$pre"_X01BD-userdebug">>subgo
+echo "$maki">>subgo
 else
-brunch "$n"_X01BD-userdebug
-z=0
+brunch "$pre"_X01BD-userdebug
+echo "brunch "$pre"_X01BD-userdebug">>subgo
 fi
+chmod +x subgo
 printf "\n\n\n\n"
-echo "process stopped!! may be build succeded or error occured"
-
-for ((; $z < 3;));
-do
-printf "\n\n1. rebuild the rom?\n2. clean-build the rom?\n3. exit?\n"
-read z
-
-   if [ "$z" == "1" ]; then
-   brunch "$n"_X01BD-userdebug
-   fi
-   
-   if [ "$z" == "2" ]; then
-   make clean
-   brunch "$n"_X01BD-userdebug
-   fi
-done
+if [ -f out/target/product/X01BD/*"$n"*.zip ]; then
+echo " BUILD SUCCESSFUL "
+else
+echo "process stopped!! Fix the errors"
+fi
+fi
